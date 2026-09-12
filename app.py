@@ -24,14 +24,23 @@ from logic import (
     get_contact_touch_count,
     parse_and_import_contacts_json,
 )
+from theme import (
+    LUXURY_BENTO_CSS,
+    inject_luxury_theme,
+    render_atelier_header,
+    render_horlogerie_clocks,
+)
 
 # Page config
 st.set_page_config(
-    page_title="Retoucher CRM",
+    page_title="Retoucher CRM | Atelier Joaillerie",
     page_icon="💎",
     layout="wide",
     initial_sidebar_state="expanded",
 )
+
+# Haute Joaillerie Atelier Bento Design System
+inject_luxury_theme()
 
 # Ensure database exists
 init_db()
@@ -41,27 +50,17 @@ init_db()
 # SIDEBAR: Timezones & Outreach Configuration
 # ==============================================================================
 with st.sidebar:
-    st.markdown("### 🌍 Часовые пояса клиентов")
+    st.markdown("### 🌍 Horlogerie: Часовые пояса")
     st.caption("Ориентир для отправки follow-up в рабочее время клиента")
 
     tz_targets = [
         ("🇺🇸 New York (EST)", "America/New_York"),
         ("🇬🇧 London (GMT/BST)", "Europe/London"),
-        ("🇫🇷 Paris / CET", "Europe/Paris"),
+        ("🇫🇷 Paris (CET)", "Europe/Paris"),
         ("🇦🇪 Dubai (GST)", "Asia/Dubai"),
         ("🇯🇵 Tokyo (JST)", "Asia/Tokyo"),
     ]
-
-    for tz_label, tz_key in tz_targets:
-        try:
-            local_dt = datetime.now(ZoneInfo(tz_key))
-            is_work = 9 <= local_dt.hour < 18
-            status_icon = "🟢" if is_work else "🌙"
-            work_note = "Рабочее время" if is_work else "Нерабочее время"
-            st.markdown(f"{status_icon} **{local_dt.strftime('%H:%M')}** — {tz_label}")
-            st.caption(f"Статус: {work_note} (местное)")
-        except Exception:
-            pass
+    render_horlogerie_clocks(tz_targets)
 
     st.markdown("---")
     st.markdown("### ⚙️ Настройки аутрича")
@@ -101,10 +100,9 @@ with st.sidebar:
     else:
         st.info("⚪ Офлайн-режим (SQLite)")
 
-# App Header
-st.markdown("## 💎 CRM Ретушера Ювелирных Изделий")
+# App Header: Haute Joaillerie Atelier Bento Header
 today_str = date.today().isoformat()
-st.caption(f"Сегодня: **{date.today().strftime('%d.%m.%Y')}** | Локальная offline-first база данных")
+render_atelier_header(date_str=date.today().strftime("%d.%m.%Y"))
 
 # Navigation Tabs
 tab_today, tab_contacts, tab_outreach, tab_deals, tab_money, tab_dashboard = st.tabs(
@@ -878,7 +876,7 @@ with tab_outreach:
                 st.caption(st_desc)
 
                 if not stage_items:
-                    st.markdown("<div style='border: 1px dashed #444; border-radius: 6px; padding: 10px; text-align: center; color: gray; font-size: 12px;'>Пусто</div>", unsafe_allow_html=True)
+                    st.markdown("<div class='bento-kanban-empty'>Atelier Queue Empty</div>", unsafe_allow_html=True)
                 else:
                     for item in stage_items:
                         with st.container(border=True):

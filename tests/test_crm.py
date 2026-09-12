@@ -126,3 +126,98 @@ def test_normalize_domain():
     assert logic.normalize_domain("http://aethelgard.co.uk/") == "aethelgard.co.uk"
     assert logic.normalize_domain("WWW.MilanoOro.IT") == "milanooro.it"
     assert logic.normalize_domain(None) == ""
+
+
+def test_luxury_bento_theme_palette_and_fonts():
+    """Verify Haute Joaillerie Atelier Bento design tokens and typography."""
+    import theme
+
+    css = theme.LUXURY_BENTO_CSS
+
+    # Brand color tokens
+    assert "#07090E" in css  # Obsidian Canvas
+    assert "#0E121B" in css  # Bento surface
+    assert "#D4AF37" in css  # 18K Champagne Gold
+    assert "#F3D079" in css  # Light Gold
+    assert "#10B981" in css  # Gemstone Emerald
+    assert "#F43F5E" in css  # Gemstone Ruby
+    assert "#38BDF8" in css  # Gemstone Sapphire
+
+    # Google fonts
+    assert "Cinzel" in css
+    assert "Plus Jakarta Sans" in css
+    assert "JetBrains Mono" in css
+
+    # Core component selectors
+    assert '[data-testid="stMetric"]' in css
+    assert '[data-testid="stVerticalBlockBorderWrapper"]' in css
+    assert '[data-testid="stTabs"]' in css
+    assert '[data-testid="stSidebar"]' in css
+    assert '.stButton > button' in css
+
+
+def test_render_atelier_header(monkeypatch):
+    """Verify render_atelier_header produces valid Haute Joaillerie markup."""
+    import streamlit as st
+    import theme
+
+    captured_markdown = []
+    monkeypatch.setattr(st, "markdown", lambda content, **kwargs: captured_markdown.append(content))
+
+    # Test with default date
+    theme.render_atelier_header()
+    assert len(captured_markdown) == 1
+    assert "HAUTE JOAILLERIE ATELIER" in captured_markdown[0]
+    assert "RETOUCH OPERATIONAL CRM" in captured_markdown[0]
+    assert "atelier-header-bento" in captured_markdown[0]
+
+    # Test with custom date
+    captured_markdown.clear()
+    theme.render_atelier_header(date_str="25.12.2026")
+    assert len(captured_markdown) == 1
+    assert "25.12.2026" in captured_markdown[0]
+
+
+def test_render_horlogerie_clocks(monkeypatch):
+    """Verify render_horlogerie_clocks renders clock cards and handles invalid timezones gracefully."""
+    import streamlit as st
+    import theme
+
+    captured_markdown = []
+    monkeypatch.setattr(st, "markdown", lambda content, **kwargs: captured_markdown.append(content))
+
+    # Test with default timezones
+    theme.render_horlogerie_clocks()
+    assert len(captured_markdown) == 1
+    assert "horlogerie-container" in captured_markdown[0]
+    assert "horlogerie-card" in captured_markdown[0]
+    assert "New York" in captured_markdown[0]
+    assert "Tokyo" in captured_markdown[0]
+
+    # Test with invalid timezone in list (should not crash)
+    captured_markdown.clear()
+    targets = [
+        ("🇺🇸 Valid NY", "America/New_York"),
+        ("👽 Invalid City", "NonExistent/Timezone_1234"),
+    ]
+    theme.render_horlogerie_clocks(targets)
+    assert len(captured_markdown) == 1
+    assert "Valid NY" in captured_markdown[0]
+    assert "Invalid City" not in captured_markdown[0]
+
+
+def test_inject_luxury_theme(monkeypatch):
+    """Verify inject_luxury_theme injects style tags."""
+    import streamlit as st
+    import theme
+
+    captured = []
+    monkeypatch.setattr(st, "markdown", lambda content, **kwargs: captured.append((content, kwargs)))
+
+    theme.inject_luxury_theme()
+    assert len(captured) == 1
+    content, kwargs = captured[0]
+    assert content.startswith("<style>")
+    assert content.endswith("</style>")
+    assert kwargs.get("unsafe_allow_html") is True
+
