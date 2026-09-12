@@ -76,6 +76,31 @@ with st.sidebar:
     s_port = st.text_input("Ссылка на портфолио:", value=st.session_state["portfolio_link"], key="cfg_s_port")
     st.session_state["portfolio_link"] = s_port
 
+    st.markdown("---")
+    st.markdown("### ☁️ Облако Supabase")
+    from supabase_sync import is_supabase_connected, push_to_supabase, pull_from_supabase
+
+    if is_supabase_connected():
+        st.success("🟢 Supabase подключен")
+        c_sync1, c_sync2 = st.columns(2)
+        with c_sync1:
+            if st.button("⬆️ В облако", key="btn_push_cloud", help="Отправить все локальные данные в Supabase"):
+                res = push_to_supabase()
+                if res["success"]:
+                    st.toast("✅ База успешно выгружена в Supabase!")
+                else:
+                    st.error("Ошибка выгрузки в облако")
+        with c_sync2:
+            if st.button("⬇️ Из облака", key="btn_pull_cloud", help="Загрузить актуальные данные из Supabase"):
+                res = pull_from_supabase()
+                if res["success"]:
+                    st.toast("✅ База обновлена из Supabase!")
+                    st.rerun()
+                else:
+                    st.error("Ошибка загрузки из облака")
+    else:
+        st.info("⚪ Офлайн-режим (SQLite)")
+
 # App Header
 st.markdown("## 💎 CRM Ретушера Ювелирных Изделий")
 today_str = date.today().isoformat()
