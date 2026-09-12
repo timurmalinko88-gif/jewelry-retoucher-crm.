@@ -152,195 +152,213 @@ def init_db() -> None:
 
 def seed_demo_data() -> None:
     """Populate database with demo dataset if contacts table is empty."""
-    with get_connection() as conn:
-        cursor = conn.cursor()
-        cursor.execute("SELECT COUNT(*) FROM contacts;")
-        if cursor.fetchone()[0] > 0:
-            return  # Already seeded
+    try:
+        with get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("SELECT COUNT(*) FROM contacts;")
+            row = cursor.fetchone()
+            if row and row[0] > 0:
+                return  # Already seeded
 
-        # Seed 5 Contacts
-        contacts_data = [
-            (
-                "Lumina Fine Jewels",
-                "US",
-                "https://luminajewels.com",
-                "@luminajewels",
-                "sarah@luminajewels.com",
-                "valid",
-                "Sarah Jenkins (Creative Director)",
-                "en",
-                "Fine Jewelry",
-                "high",
-                "250 items",
-                "Mid (needs metal smoothing and diamond brilliance)",
-                "aggressive",
-                "EST (UTC-5)",
-                "Instagram Outreach",
-                "contacted",
-                "Interested in clean white background and editorial renders.",
-            ),
-            (
-                "Aethelgard Silver",
-                "GB",
-                "https://aethelgard.co.uk",
-                "@aethelgard_uk",
-                "edward@aethelgard.co.uk",
-                "valid",
-                "Edward Vance (Founder)",
-                "en",
-                "Silver & Gothic",
-                "medium",
-                "80 items",
-                "Raw studio photos with heavy shadows",
-                "standard",
-                "GMT (UTC+0)",
-                "Google Search",
-                "lead",
-                "Handcrafted rings, focus on texture preservation.",
-            ),
-            (
-                "Milano Oro & Pietre",
-                "IT",
-                "https://milanooro.it",
-                "@milano_oro",
-                "marco.rossi@milanooro.it",
-                "unverified",
-                "Marco Rossi (Owner)",
-                "en",
-                "High Jewelry",
-                "high",
-                "120 items",
-                "Good camera, mediocre post-production",
-                "patient",
-                "CET (UTC+1)",
-                "VicenzaOro Exhibitor List",
-                "replied",
-                "Requested before/after samples of emeralds and gold reflections.",
-            ),
-            (
-                "Atelier Dauphin Paris",
-                "FR",
-                "https://atelier-dauphin.fr",
-                "@atelierdauphin",
-                "claire@atelier-dauphin.fr",
-                "valid",
-                "Claire Laurent (Marketing Lead)",
-                "fr",
-                "Contemporary Art Jewelry",
-                "medium",
-                "150 items",
-                "High quality 3D CAD renders needing photorealism touch",
-                "slow",
-                "CET (UTC+1)",
-                "LinkedIn",
-                "negotiation",
-                "Currently discussing test batch of 15 pieces.",
-            ),
-            (
-                "Nordic Aurum Studio",
-                "SE",
-                "https://nordicaurum.se",
-                "@nordic.aurum",
-                "astrid@nordicaurum.se",
-                "unverified",
-                "Astrid Lind (Designer)",
-                "en",
-                "Minimalist Jewelry",
-                "low",
-                "45 items",
-                "iPhone daylight photos",
-                "patient",
-                "CET (UTC+1)",
-                "Instagram",
-                "lead",
-                "Small collection, might need budget package.",
-            ),
-        ]
+            # Seed 5 Contacts
+            contacts_data = [
+                (
+                    "Lumina Fine Jewels",
+                    "US",
+                    "https://luminajewels.com",
+                    "@luminajewels",
+                    "sarah@luminajewels.com",
+                    "valid",
+                    "Sarah Jenkins (Creative Director)",
+                    "en",
+                    "Fine Jewelry",
+                    "high",
+                    "250 items",
+                    "Mid (needs metal smoothing and diamond brilliance)",
+                    "aggressive",
+                    "EST (UTC-5)",
+                    "Instagram Outreach",
+                    "contacted",
+                    "Interested in clean white background and editorial renders.",
+                ),
+                (
+                    "Aethelgard Silver",
+                    "GB",
+                    "https://aethelgard.co.uk",
+                    "@aethelgard_uk",
+                    "edward@aethelgard.co.uk",
+                    "valid",
+                    "Edward Vance (Founder)",
+                    "en",
+                    "Silver & Gothic",
+                    "medium",
+                    "80 items",
+                    "Raw studio photos with heavy shadows",
+                    "standard",
+                    "GMT (UTC+0)",
+                    "Google Search",
+                    "lead",
+                    "Handcrafted rings, focus on texture preservation.",
+                ),
+                (
+                    "Milano Oro & Pietre",
+                    "IT",
+                    "https://milanooro.it",
+                    "@milano_oro",
+                    "marco.rossi@milanooro.it",
+                    "unverified",
+                    "Marco Rossi (Owner)",
+                    "en",
+                    "High Jewelry",
+                    "high",
+                    "120 items",
+                    "Good camera, mediocre post-production",
+                    "patient",
+                    "CET (UTC+1)",
+                    "VicenzaOro Exhibitor List",
+                    "replied",
+                    "Requested before/after samples of emeralds and gold reflections.",
+                ),
+                (
+                    "Atelier Dauphin Paris",
+                    "FR",
+                    "https://atelier-dauphin.fr",
+                    "@atelierdauphin",
+                    "claire@atelier-dauphin.fr",
+                    "valid",
+                    "Claire Laurent (Marketing Lead)",
+                    "fr",
+                    "Contemporary Art Jewelry",
+                    "medium",
+                    "150 items",
+                    "High quality 3D CAD renders needing photorealism touch",
+                    "slow",
+                    "CET (UTC+1)",
+                    "LinkedIn",
+                    "negotiation",
+                    "Currently discussing test batch of 15 pieces.",
+                ),
+                (
+                    "Nordic Aurum Studio",
+                    "SE",
+                    "https://nordicaurum.se",
+                    "@nordic.aurum",
+                    "astrid@nordicaurum.se",
+                    "unverified",
+                    "Astrid Lind (Designer)",
+                    "en",
+                    "Minimalist Jewelry",
+                    "low",
+                    "45 items",
+                    "iPhone daylight photos",
+                    "patient",
+                    "CET (UTC+1)",
+                    "Instagram",
+                    "lead",
+                    "Small collection, might need budget package.",
+                ),
+            ]
 
-        cursor.executemany(
-            """
-            INSERT INTO contacts (
-                brand_name, country, website, instagram, email, email_status,
-                decision_maker, language, category, priority, catalog_size,
-                photo_quality, cultural_profile, timezone_note, source_base,
-                pipeline_status, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            contacts_data,
-        )
-
-        # Seed 3 Touches
-        touches_data = [
-            (
-                1,
-                "Email",
-                "initial_cold",
-                "Quick retouching question for Lumina Fine Jewels",
-                "2026-09-10",
-                "sent",
-                "2026-09-13",
-                "Cold email with link to curated diamond ring portfolio.",
-            ),
-            (
-                3,
-                "Instagram",
-                "dm_compliment",
-                "Compliment on emerald collection & test offer",
-                "2026-09-08",
-                "replied",
-                "2026-09-15",
-                "Client replied asking for pricing per item.",
-            ),
-            (
-                4,
-                "Email",
-                "portfolio_followup",
-                "Test piece estimation for Atelier Dauphin Paris",
-                "2026-09-05",
-                "sent",
-                "2026-09-15",
-                "Sent quote of $750 for 15 pieces. Waiting for approval.",
-            ),
-        ]
-
-        cursor.executemany(
-            """
-            INSERT INTO touches (
-                contact_id, channel, template_type, subject, sent_date,
-                status, next_action_date, notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            touches_data,
-        )
-
-        # Seed 1 Deal
-        deals_data = [
-            (
-                4,
-                "one-off",
-                "Test batch: 15 pieces lookbook retouching",
-                750.0,
-                "Upwork",
-                "https://www.upwork.com/contracts/~01testdauphin123",
-                "in_progress",
-                "2026-09-11",
-                "2026-09-18",
-                None,
+            cursor.executemany(
+                """
+                INSERT INTO contacts (
+                    brand_name, country, website, instagram, email, email_status,
+                    decision_maker, language, category, priority, catalog_size,
+                    photo_quality, cultural_profile, timezone_note, source_base,
+                    pipeline_status, notes
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                contacts_data,
             )
-        ]
 
-        cursor.executemany(
-            """
-            INSERT INTO deals (
-                contact_id, deal_type, description, amount_usd,
-                payment_method, upwork_contract_url, status,
-                created_date, delivered_date, paid_date
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            deals_data,
-        )
+            # Retrieve actual generated IDs to avoid FK constraint violations
+            cursor.execute("SELECT id, brand_name FROM contacts;")
+            c_map = {r["brand_name"]: r["id"] for r in cursor.fetchall()}
 
-        conn.commit()
+            lumina_id = c_map.get("Lumina Fine Jewels")
+            milano_id = c_map.get("Milano Oro & Pietre")
+            dauphin_id = c_map.get("Atelier Dauphin Paris")
+
+            # Seed Touches with guaranteed existing contact_id
+            touches_data = []
+            if lumina_id:
+                touches_data.append(
+                    (
+                        lumina_id,
+                        "Email",
+                        "initial_cold",
+                        "Quick retouching question for Lumina Fine Jewels",
+                        "2026-09-10",
+                        "sent",
+                        "2026-09-13",
+                        "Cold email with link to curated diamond ring portfolio.",
+                    )
+                )
+            if milano_id:
+                touches_data.append(
+                    (
+                        milano_id,
+                        "Instagram",
+                        "dm_compliment",
+                        "Compliment on emerald collection & test offer",
+                        "2026-09-08",
+                        "replied",
+                        "2026-09-15",
+                        "Client replied asking for pricing per item.",
+                    )
+                )
+            if dauphin_id:
+                touches_data.append(
+                    (
+                        dauphin_id,
+                        "Email",
+                        "portfolio_followup",
+                        "Test piece estimation for Atelier Dauphin Paris",
+                        "2026-09-05",
+                        "sent",
+                        "2026-09-15",
+                        "Sent quote of $750 for 15 pieces. Waiting for approval.",
+                    )
+                )
+
+            if touches_data:
+                cursor.executemany(
+                    """
+                    INSERT INTO touches (
+                        contact_id, channel, template_type, subject, sent_date,
+                        status, next_action_date, notes
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    touches_data,
+                )
+
+            # Seed Deal with guaranteed existing contact_id
+            if dauphin_id:
+                cursor.execute(
+                    """
+                    INSERT INTO deals (
+                        contact_id, deal_type, description, amount_usd,
+                        payment_method, upwork_contract_url, status,
+                        created_date, delivered_date, paid_date
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    """,
+                    (
+                        dauphin_id,
+                        "one-off",
+                        "Test batch: 15 pieces lookbook retouching",
+                        750.0,
+                        "Upwork",
+                        "https://www.upwork.com/contracts/~01testdauphin123",
+                        "in_progress",
+                        "2026-09-11",
+                        "2026-09-18",
+                        None,
+                    ),
+                )
+
+            conn.commit()
+    except Exception as e:
+        print(f"Notice: demo seeding skipped ({e})")
 
 
 # ==========================================
