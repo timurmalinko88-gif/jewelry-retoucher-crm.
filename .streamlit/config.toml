@@ -3,12 +3,15 @@ primaryColor = "#D4AF37"
 backgroundColor = "#07090E"
 secondaryBackgroundColor = "#0E121B"
 textColor = "#F1F5F9"
+borderColor = "rgba(212, 175, 55, 0.22)"
+baseRadius = "0.75rem"
+buttonRadius = "0.5rem"
 font = "sans serif"
 
 [server]
 headless = true
-enableCORS = false
 enableXsrfProtection = true
 
 [browser]
 gatherUsageStats = false
+

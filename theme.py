@@ -109,8 +109,10 @@ h4, h5, h6 {
     letter-spacing: 0.02em !important;
 }
 
-/* 5. BENTO CONTAINER WRAPPERS (border=True) */
-[data-testid="stVerticalBlockBorderWrapper"] > div {
+/* 5. BENTO CONTAINER WRAPPERS (border=True) & KANBAN CARDS */
+div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"],
+div[data-testid="stVerticalBlockBorderWrapper"] > div,
+div[data-testid="stVerticalBlockBorderWrapper"] {
     background: linear-gradient(180deg, #111520 0%, #0C0F17 100%) !important;
     border: 1px solid var(--border-gold-subtle) !important;
     border-radius: 12px !important;
@@ -119,9 +121,21 @@ h4, h5, h6 {
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
 }
 
-[data-testid="stVerticalBlockBorderWrapper"] > div:hover {
-    border-color: rgba(212, 175, 55, 0.4) !important;
-    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.09) !important;
+div[data-testid="stLayoutWrapper"] > div[data-testid="stVerticalBlock"]:hover,
+div[data-testid="stVerticalBlockBorderWrapper"] > div:hover,
+div[data-testid="stVerticalBlockBorderWrapper"]:hover {
+    border-color: var(--border-gold-glow) !important;
+    box-shadow: 0 10px 30px rgba(212, 175, 55, 0.12) !important;
+    transform: translateY(-2px) !important;
+}
+
+/* 5b. STREAMLIT FORMS (BENTO SURFACES) */
+div[data-testid="stForm"] {
+    background: linear-gradient(180deg, #10141F 0%, #0B0E16 100%) !important;
+    border: 1px solid var(--border-gold-subtle) !important;
+    border-radius: 14px !important;
+    padding: 20px !important;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.4) !important;
 }
 
 /* 6. STREAMLIT TABS (LUXURY GOLD PILLS) */
@@ -506,35 +520,35 @@ def render_atelier_header(date_str: str | None = None) -> None:
     if not date_str:
         date_str = datetime.now().strftime("%d.%m.%Y")
 
-    header_html = f"""
-    <div class="atelier-header-bento">
-        <div class="atelier-header-glow"></div>
-        <div class="atelier-header-content">
-            <div class="atelier-title-group">
-                <div class="atelier-eyebrow">
-                    <span>💎</span>
-                    <span class="atelier-eyebrow-text">HAUTE JOAILLERIE ATELIER</span>
-                </div>
-                <h1 class="atelier-main-title">RETOUCH OPERATIONAL CRM</h1>
-                <div class="atelier-subtitle">Bespoke Jewelry Post-Production, Client Relations & Cashflow Protocol</div>
-            </div>
-            <div class="atelier-meta-group">
-                <div class="atelier-badge atelier-badge-gold">
-                    <span class="badge-dot dot-gold"></span>
-                    <span>18K Champagne Gold Tier</span>
-                </div>
-                <div class="atelier-badge atelier-badge-emerald">
-                    <span class="badge-dot dot-emerald"></span>
-                    <span>Offline-First Atelier</span>
-                </div>
-                <div class="atelier-badge atelier-badge-date">
-                    <span>📅</span>
-                    <span>{date_str}</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    """
+    header_html = (
+        '<div class="atelier-header-bento">\n'
+        '<div class="atelier-header-glow"></div>\n'
+        '<div class="atelier-header-content">\n'
+        '<div class="atelier-title-group">\n'
+        '<div class="atelier-eyebrow">\n'
+        '<span>💎</span>\n'
+        '<span class="atelier-eyebrow-text">HAUTE JOAILLERIE ATELIER</span>\n'
+        '</div>\n'
+        '<h1 class="atelier-main-title">RETOUCH OPERATIONAL CRM</h1>\n'
+        '<div class="atelier-subtitle">Bespoke Jewelry Post-Production, Client Relations & Cashflow Protocol</div>\n'
+        '</div>\n'
+        '<div class="atelier-meta-group">\n'
+        '<div class="atelier-badge atelier-badge-gold">\n'
+        '<span class="badge-dot dot-gold"></span>\n'
+        '<span>18K Champagne Gold Tier</span>\n'
+        '</div>\n'
+        '<div class="atelier-badge atelier-badge-emerald">\n'
+        '<span class="badge-dot dot-emerald"></span>\n'
+        '<span>Offline-First Atelier</span>\n'
+        '</div>\n'
+        '<div class="atelier-badge atelier-badge-date">\n'
+        '<span>📅</span>\n'
+        f'<span>{date_str}</span>\n'
+        '</div>\n'
+        '</div>\n'
+        '</div>\n'
+        '</div>'
+    )
     st.markdown(header_html, unsafe_allow_html=True)
 
 
@@ -578,29 +592,25 @@ def render_horlogerie_clocks(tz_targets: list[tuple[str, str]] | None = None) ->
                 dot_class = "horlogerie-dot dot-dormant"
                 desc_text = "Выходной" if not is_weekday else "Нерабочее время"
 
-            card_markup = f"""
-            <div class="{card_class}">
-                <div class="horlogerie-header">
-                    <span class="horlogerie-city">{tz_label}</span>
-                    <span class="{badge_class}">{badge_text}</span>
-                </div>
-                <div class="horlogerie-time-row">
-                    <span class="horlogerie-time">{time_str}</span>
-                    <span class="horlogerie-day">{day_str}</span>
-                </div>
-                <div class="horlogerie-footer">
-                    <span class="{dot_class}"></span>
-                    <span class="horlogerie-desc">{desc_text}</span>
-                </div>
-            </div>
-            """
+            card_markup = (
+                f'<div class="{card_class}">\n'
+                f'<div class="horlogerie-header">\n'
+                f'<span class="horlogerie-city">{tz_label}</span>\n'
+                f'<span class="{badge_class}">{badge_text}</span>\n'
+                f'</div>\n'
+                f'<div class="horlogerie-time-row">\n'
+                f'<span class="horlogerie-time">{time_str}</span>\n'
+                f'<span class="horlogerie-day">{day_str}</span>\n'
+                f'</div>\n'
+                f'<div class="horlogerie-footer">\n'
+                f'<span class="{dot_class}"></span>\n'
+                f'<span class="horlogerie-desc">{desc_text}</span>\n'
+                f'</div>\n'
+                f'</div>\n'
+            )
             clock_cards_html.append(card_markup)
         except Exception:
             continue
 
-    full_markup = f"""
-    <div class="horlogerie-container">
-        {"".join(clock_cards_html)}
-    </div>
-    """
+    full_markup = f'<div class="horlogerie-container">\n{"".join(clock_cards_html)}</div>'
     st.markdown(full_markup, unsafe_allow_html=True)

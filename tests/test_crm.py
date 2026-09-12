@@ -151,13 +151,15 @@ def test_luxury_bento_theme_palette_and_fonts():
     # Core component selectors
     assert '[data-testid="stMetric"]' in css
     assert '[data-testid="stVerticalBlockBorderWrapper"]' in css
+    assert '[data-testid="stLayoutWrapper"]' in css
+    assert '[data-testid="stForm"]' in css
     assert '[data-testid="stTabs"]' in css
     assert '[data-testid="stSidebar"]' in css
     assert '.stButton > button' in css
 
 
 def test_render_atelier_header(monkeypatch):
-    """Verify render_atelier_header produces valid Haute Joaillerie markup."""
+    """Verify render_atelier_header produces valid Haute Joaillerie markup without Markdown indentation bugs."""
     import streamlit as st
     import theme
 
@@ -171,6 +173,10 @@ def test_render_atelier_header(monkeypatch):
     assert "RETOUCH OPERATIONAL CRM" in captured_markdown[0]
     assert "atelier-header-bento" in captured_markdown[0]
 
+    # Critical regression check: No line starts with 4+ spaces (which Markdown parses as code block)
+    for line in captured_markdown[0].splitlines():
+        assert not line.startswith("    "), f"Indented line in header would be treated as code block: {line!r}"
+
     # Test with custom date
     captured_markdown.clear()
     theme.render_atelier_header(date_str="25.12.2026")
@@ -179,7 +185,7 @@ def test_render_atelier_header(monkeypatch):
 
 
 def test_render_horlogerie_clocks(monkeypatch):
-    """Verify render_horlogerie_clocks renders clock cards and handles invalid timezones gracefully."""
+    """Verify render_horlogerie_clocks renders clock cards without Markdown code block indentation and handles invalid timezones gracefully."""
     import streamlit as st
     import theme
 
@@ -193,6 +199,10 @@ def test_render_horlogerie_clocks(monkeypatch):
     assert "horlogerie-card" in captured_markdown[0]
     assert "New York" in captured_markdown[0]
     assert "Tokyo" in captured_markdown[0]
+
+    # Critical regression check: No line starts with 4+ spaces (which Markdown parses as code block)
+    for line in captured_markdown[0].splitlines():
+        assert not line.startswith("    "), f"Indented line in horlogerie clocks would be treated as code block: {line!r}"
 
     # Test with invalid timezone in list (should not crash)
     captured_markdown.clear()
