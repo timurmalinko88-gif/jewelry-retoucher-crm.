@@ -33,9 +33,9 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-# Ensure database and seed data exist
+# Ensure database exists
 init_db()
-seed_demo_data()
+# seed_demo_data()  # Disabled to keep database clean
 
 # ==============================================================================
 # SIDEBAR: Timezones & Outreach Configuration
